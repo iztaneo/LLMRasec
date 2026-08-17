@@ -77,16 +77,18 @@ def configure_optimizer(model, weight_decay, learning_rate, device_type):
 
 
 
-def get_lr(it, max_iters, learning_rate, warmup_iters=50, min_lr=1e-4):
-    """Programador de Tasa de Aprendizaje con Calentamiento (Warmup) y Decaimiento Coseno (Cosine Decay)."""
+def get_lr(it: int, max_iters: int, learning_rate: float, warmup_iters: int = 50, min_lr: float = 1e-4) -> float:
+    """Calcula el Learning Rate con Cosine Decay y Warmup."""
     if it < warmup_iters:
-        return learning_rate * it / warmup_iters
-    if it > max_iters:
+        return learning_rate * (it + 1) / (warmup_iters + 1)
+    if it >= max_iters:
         return min_lr
+    if max_iters <= warmup_iters:
+        return learning_rate
     decay_ratio = (it - warmup_iters) / (max_iters - warmup_iters)
-    assert 0 <= decay_ratio <= 1
     coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio))
     return min_lr + coeff * (learning_rate - min_lr)
+
 
 
 def main():
