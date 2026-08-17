@@ -14,27 +14,32 @@
 #include <chrono>
 
 int main(int argc, char** argv) {
-    std::string data_path = "../sample_data/input.txt";
-    if (argc > 1) data_path = argv[1];
+    std::string data_path = "sample_data/input.txt";
+    if (argc > 1) {
+        data_path = argv[1];
+    } else if (!std::ifstream(data_path).good() && std::ifstream("../sample_data/input.txt").good()) {
+        data_path = "../sample_data/input.txt";
+    }
 
-    std::cout << "============================================================\n";
-    std::cout << "🚀 Iniciando Entrenamiento del LLM en C++ (NeuralSuite)\n";
-    std::cout << "============================================================\n";
+    std::cout << "============================================================\n" << std::flush;
+    std::cout << "🚀 Iniciando Entrenamiento del LLM en C++ (NeuralSuite)\n" << std::flush;
+    std::cout << "============================================================\n" << std::flush;
 
     // 1. Cargar dataset de texto
     std::ifstream file(data_path);
+
     if (!file.is_open()) {
-        std::cerr << "❌ No se pudo abrir el archivo de datos: " << data_path << "\n";
+        std::cerr << "❌ No se pudo abrir el archivo de datos: " << data_path << "\n" << std::flush;
         return 1;
     }
     std::stringstream buffer;
     buffer << file.rdbuf();
     std::string text = buffer.str();
-    std::cout << "📄 Dataset cargado: " << text.size() << " caracteres.\n";
+    std::cout << "📄 Dataset cargado: " << text.size() << " caracteres.\n" << std::flush;
 
     // 2. Inicializar Tokenizador
     ns::CharTokenizer tokenizer(text);
-    std::cout << "🔤 Vocabulario del tokenizador C++: " << tokenizer.vocab_size << " caracteres únicos.\n";
+    std::cout << "🔤 Vocabulario del tokenizador C++: " << tokenizer.vocab_size << " caracteres únicos.\n" << std::flush;
     tokenizer.save("vocab_cpp.txt");
 
     // 3. Tokenizar texto completo
@@ -49,7 +54,7 @@ int main(int argc, char** argv) {
     config.n_embd = 32;
 
     ns::GPTModel model(config);
-    std::cout << "🧠 Modelo GPT C++ Creado exitosamente.\n";
+    std::cout << "🧠 Modelo GPT C++ Creado exitosamente.\n" << std::flush;
 
     // 5. Configurar Optimizador
     std::vector<ns::Tensor*> params = model.get_parameters();
@@ -61,7 +66,7 @@ int main(int argc, char** argv) {
     int batch_size = 4;
     int block_size = config.block_size;
 
-    std::cout << "🏋️ Entrenando durante " << max_iters << " iteraciones en C++...\n";
+    std::cout << "🏋️ Entrenando durante " << max_iters << " iteraciones en C++...\n" << std::flush;
     auto start_time = std::chrono::high_resolution_clock::now();
 
     for (int iter = 1; iter <= max_iters; ++iter) {
@@ -90,10 +95,10 @@ int main(int argc, char** argv) {
         if (iter % 10 == 0 || iter == max_iters) {
             auto current_time = std::chrono::high_resolution_clock::now();
             double elapsed = std::chrono::duration<double>(current_time - start_time).count();
-            std::cout << "Step " << iter << "/" << max_iters << " | Loss: " << loss << " | Tiempo: " << elapsed << "s\n";
+            std::cout << "Step " << iter << "/" << max_iters << " | Loss LLM: " << loss << " | Tiempo: " << elapsed << "s\n" << std::flush;
         }
     }
 
-    std::cout << "✅ ¡Entrenamiento del LLM en C++ completado exitosamente!\n";
+    std::cout << "✅ ¡Entrenamiento del LLM en C++ completado exitosamente!\n" << std::flush;
     return 0;
 }

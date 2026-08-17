@@ -13,9 +13,9 @@
 #include <iostream>
 
 int main() {
-    std::cout << "============================================================\n";
-    std::cout << "🖼️ Demostración 2: Red Convolucional (CNN 2D) en C++\n";
-    std::cout << "============================================================\n";
+    std::cout << "============================================================\n" << std::flush;
+    std::cout << "🖼️ Demostración 2: Red Convolucional (CNN 2D) en C++\n" << std::flush;
+    std::cout << "============================================================\n" << std::flush;
 
     // Entrada: 2 imágenes de 1 canal (1 x 8 x 8)
     ns::Tensor X({2, 1, 8, 8});
@@ -41,7 +41,7 @@ int main() {
 
     ns::AdamW optimizer(params, grads, 0.01f);
 
-    std::cout << "🏋️ Entrenando CNN durante 20 iteraciones...\n";
+    std::cout << "🏋️ Entrenando CNN durante 20 iteraciones...\n" << std::flush;
     for (int epoch = 1; epoch <= 20; ++epoch) {
         optimizer.zero_grad();
 
@@ -70,10 +70,10 @@ int main() {
         optimizer.step();
 
         if (epoch % 5 == 0 || epoch == 1) {
-            std::cout << "Época " << epoch << " | Loss Convolucional: " << loss << "\n";
+            std::cout << "Época " << epoch << " | Loss Convolucional: " << loss << "\n" << std::flush;
         }
     }
 
-    std::cout << "✅ ¡Entrenamiento CNN completado exitosamente en C++!\n";
+    std::cout << "✅ ¡Entrenamiento CNN completado exitosamente en C++!\n" << std::flush;
     return 0;
 }

@@ -12,7 +12,7 @@
 #include <cmath>
 
 void test_matmul() {
-    std::cout << "🧪 [Test 1] Multiplicación de Matrices (GEMM)... ";
+    std::cout << "🧪 [Test 1] Multiplicación de Matrices (GEMM)... " << std::flush;
     ns::Tensor A({2, 3});
     ns::Tensor B({3, 2});
     
@@ -34,11 +34,11 @@ void test_matmul() {
     assert(std::abs(C.data[2] - 85.0f) < 1e-4f);
     assert(std::abs(C.data[3] - 55.0f) < 1e-4f);
 
-    std::cout << "PASADO ✅\n";
+    std::cout << "PASADO ✅\n" << std::flush;
 }
 
 void test_layernorm() {
-    std::cout << "🧪 [Test 2] Normalización de Capa (LayerNorm)... ";
+    std::cout << "🧪 [Test 2] Normalización de Capa (LayerNorm)... " << std::flush;
     ns::Tensor x({1, 4});
     x.data[0] = 2.0f; x.data[1] = 4.0f; x.data[2] = 4.0f; x.data[3] = 6.0f;
 
@@ -51,11 +51,11 @@ void test_layernorm() {
     // Media = (2+4+4+6)/4 = 4.0
     assert(std::abs(mean.data[0] - 4.0f) < 1e-4f);
 
-    std::cout << "PASADO ✅\n";
+    std::cout << "PASADO ✅\n" << std::flush;
 }
 
 void test_tokenizer() {
-    std::cout << "🧪 [Test 3] Tokenizador de Caracteres C++... ";
+    std::cout << "🧪 [Test 3] Tokenizador de Caracteres C++... " << std::flush;
     std::string sample = "Hello C++!";
     ns::CharTokenizer tok(sample);
     
@@ -63,11 +63,11 @@ void test_tokenizer() {
     std::string decoded = tok.decode(encoded);
 
     assert(sample == decoded);
-    std::cout << "PASADO ✅\n";
+    std::cout << "PASADO ✅\n" << std::flush;
 }
 
 void test_gradient_check_gelu() {
-    std::cout << "🧪 [Test 4] Verificación de Gradiente GELU por Diferencias Finitas... ";
+    std::cout << "🧪 [Test 4] Verificación de Gradiente GELU por Diferencias Finitas... " << std::flush;
     ns::Tensor x({1, 1});
     x.data[0] = 1.5f;
 
@@ -91,21 +91,21 @@ void test_gradient_check_gelu() {
     float diff = std::abs(dx.data[0] - num_grad);
 
     assert(diff < 1e-3f);
-    std::cout << "PASADO ✅ (Diff: " << diff << ")\n";
+    std::cout << "PASADO ✅ (Diff: " << diff << ")\n" << std::flush;
 }
 
 int main() {
-    std::cout << "============================================================\n";
-    std::cout << "🚀 Ejecutando Suite de Pruebas Unitarias de NeuralSuite (C++)\n";
-    std::cout << "============================================================\n";
+    std::cout << "============================================================\n" << std::flush;
+    std::cout << "🚀 Ejecutando Suite de Pruebas Unitarias de NeuralSuite (C++)\n" << std::flush;
+    std::cout << "============================================================\n" << std::flush;
 
     test_matmul();
     test_layernorm();
     test_tokenizer();
     test_gradient_check_gelu();
 
-    std::cout << "============================================================\n";
-    std::cout << "✅ ¡Todas las pruebas unitarias pasaron con éxito!\n";
-    std::cout << "============================================================\n";
+    std::cout << "============================================================\n" << std::flush;
+    std::cout << "✅ ¡Todas las pruebas unitarias pasaron con éxito!\n" << std::flush;
+    std::cout << "============================================================\n" << std::flush;
     return 0;
 }

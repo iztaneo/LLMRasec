@@ -63,8 +63,16 @@ size_t Tensor::total_size() const {
 }
 
 void Tensor::reshape(const std::vector<int>& new_shape) {
+    size_t old_sz = total_size();
     shape = new_shape;
+    size_t new_sz = total_size();
+
+    if (new_sz != old_sz) {
+        delete[] data;
+        data = (new_sz > 0) ? new float[new_sz]() : nullptr;
+    }
 }
+
 
 void Tensor::fill(float val) {
     size_t sz = total_size();

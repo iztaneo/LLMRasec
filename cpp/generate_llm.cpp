@@ -9,13 +9,13 @@
 #include <iostream>
 
 int main() {
-    std::cout << "============================================================\n";
-    std::cout << "🤖 Generación Autorregresiva de Texto en C++ (NeuralSuite)\n";
-    std::cout << "============================================================\n";
+    std::cout << "============================================================\n" << std::flush;
+    std::cout << "🤖 Generación Autorregresiva de Texto en C++ (NeuralSuite)\n" << std::flush;
+    std::cout << "============================================================\n" << std::flush;
 
     ns::CharTokenizer tokenizer;
     if (!tokenizer.load("vocab_cpp.txt")) {
-        std::cout << "⚠️ No se encontró 'vocab_cpp.txt'. Usando vocabulario por defecto...\n";
+        std::cout << "⚠️ No se encontró 'vocab_cpp.txt'. Usando vocabulario por defecto...\n" << std::flush;
         tokenizer.build_vocab("First Citizen: Speak, speak. MENENIUS: What work's, my countrymen?");
     }
 
@@ -29,7 +29,7 @@ int main() {
     ns::GPTModel model(config);
 
     std::string prompt = "First Citizen:\n";
-    std::cout << "Prompt de entrada: '" << prompt << "'\n\n";
+    std::cout << "Prompt de entrada: '" << prompt << "'\n\n" << std::flush;
 
     std::vector<int> tokens = tokenizer.encode(prompt);
     int max_new_tokens = 50;
@@ -62,9 +62,9 @@ int main() {
     }
 
     std::string generated = tokenizer.decode(tokens);
-    std::cout << "------------------------------------------------------------\n";
-    std::cout << "Texto Generado por el LLM C++:\n" << generated << "\n";
-    std::cout << "------------------------------------------------------------\n";
+    std::cout << "------------------------------------------------------------\n" << std::flush;
+    std::cout << "Texto Generado por el LLM C++:\n" << generated << "\n" << std::flush;
+    std::cout << "------------------------------------------------------------\n" << std::flush;
 
     return 0;
 }

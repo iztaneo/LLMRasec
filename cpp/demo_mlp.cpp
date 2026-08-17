@@ -11,9 +11,9 @@
 #include <iostream>
 
 int main() {
-    std::cout << "============================================================\n";
-    std::cout << "🧠 Demostración 1: Entrenamiento de Clasificador MLP en C++\n";
-    std::cout << "============================================================\n";
+    std::cout << "============================================================\n" << std::flush;
+    std::cout << "🧠 Demostración 1: Entrenamiento de Clasificador MLP en C++\n" << std::flush;
+    std::cout << "============================================================\n" << std::flush;
 
     // Problema XOR: 4 muestras, 2 características de entrada -> 2 clases de salida
     ns::Tensor X({4, 2});
@@ -44,7 +44,7 @@ int main() {
 
     ns::AdamW optimizer(params, grads, 0.05f);
 
-    std::cout << "🏋️ Entrenando MLP durante 200 iteraciones...\n";
+    std::cout << "🏋️ Entrenando MLP durante 200 iteraciones...\n" << std::flush;
     for (int epoch = 1; epoch <= 200; ++epoch) {
         optimizer.zero_grad();
 
@@ -64,10 +64,10 @@ int main() {
         optimizer.step();
 
         if (epoch % 50 == 0 || epoch == 1) {
-            std::cout << "Época " << epoch << " | Loss: " << loss << "\n";
+            std::cout << "Época " << epoch << " | Loss MLP: " << loss << "\n" << std::flush;
         }
     }
 
-    std::cout << "✅ ¡Entrenamiento MLP completado exitosamente en C++!\n";
+    std::cout << "✅ ¡Entrenamiento MLP completado exitosamente en C++!\n" << std::flush;
     return 0;
 }

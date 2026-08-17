@@ -11,9 +11,9 @@
 #include <iostream>
 
 int main() {
-    std::cout << "============================================================\n";
-    std::cout << "🔄 Demostración 3: Red Recurrente (LSTM) en C++\n";
-    std::cout << "============================================================\n";
+    std::cout << "============================================================\n" << std::flush;
+    std::cout << "🔄 Demostración 3: Red Recurrente (LSTM) en C++\n" << std::flush;
+    std::cout << "============================================================\n" << std::flush;
 
     // Entrada: Secuencia de 5 pasos temporales, batch=1, input_dim=4
     ns::Tensor X({5, 1, 4});
@@ -35,7 +35,7 @@ int main() {
 
     ns::AdamW optimizer(params, grads, 0.01f);
 
-    std::cout << "🏋️ Entrenando LSTM durante 10 iteraciones...\n";
+    std::cout << "🏋️ Entrenando LSTM durante 10 iteraciones...\n" << std::flush;
     for (int epoch = 1; epoch <= 10; ++epoch) {
         optimizer.zero_grad();
 
@@ -57,9 +57,9 @@ int main() {
         lstm.backward(dh_lstm);
         optimizer.step();
 
-        std::cout << "Época " << epoch << " | Loss Recurrente LSTM: " << loss << "\n";
+        std::cout << "Época " << epoch << " | Loss Recurrente LSTM: " << loss << "\n" << std::flush;
     }
 
-    std::cout << "✅ ¡Entrenamiento LSTM completado exitosamente en C++!\n";
+    std::cout << "✅ ¡Entrenamiento LSTM completado exitosamente en C++!\n" << std::flush;
     return 0;
 }
