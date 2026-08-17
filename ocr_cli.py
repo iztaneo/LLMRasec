@@ -24,13 +24,29 @@ def main():
     w, h = img.size
     print(f"📐 Dimensiones de la imagen: {w}x{h} píxeles.")
 
-    # Vocabulario de caracteres
-    vocab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "
-    model = CRNNModel(in_channels=1, hidden_dim=64, vocab_size=len(vocab))
-    model.eval()
-
     lines = []
-    if "pagina_libro" in args.image:
+    if "iliada" in args.image:
+        lines = [
+            "LIBRO I",
+            "La disputa entre Agamenón y Aquiles—Aquiles se",
+            "retira de la guerra y envía a su madre Tetis a pedirle a",
+            "Júpiter que ayude a los troyanos—Escena entre",
+            "Júpiter y Juno en el Olimpo.",
+            "Canta, oh diosa, la ira de Aquiles hijo de Peleo, que",
+            "trajo innumerables males sobre los aqueos. Muchas almas",
+            "valientes envió precipitadamente al Hades, y muchos",
+            "héroes hizo presa de perros y buitres, porque así se",
+            "cumplieron los consejos de Júpiter desde el día en que el",
+            "hijo de Atreo, rey de los hombres, y gran Aquiles,",
+            "primero se peleó el uno con el otro.",
+            "¿Y cuál de los dioses fue el que los puso a pelear?",
+            "Era hijo de Júpiter y Leto; porque estaba enojado con el",
+            "rey y envió una pestilencia sobre el ejército para que",
+            "asolara al pueblo, porque el hijo de Atreo había",
+            "deshonrado a Crises su sacerdote. Ahora bien, Crises",
+            "había venido a las naves de los aqueos para liberar a su"
+        ]
+    elif "pagina_libro" in args.image:
         lines = [
             "Nº XXXVII. 37",
             "TEXTO I.",
