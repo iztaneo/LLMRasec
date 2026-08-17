@@ -1,10 +1,12 @@
 /**
  * @file test_suite.cpp
- * @brief Suite de Pruebas Unitarias Numéricas para verificar la matemática de NeuralSuite en C++.
+ * @brief Suite de Pruebas Unitarias Automáticas y Verificación Numérica de Gradientes para NeuralSuite en C++.
  */
 
 #include "tensor.h"
 #include "tokenizer.h"
+#include "activations.h"
+#include "losses.h"
 #include <iostream>
 #include <cassert>
 #include <cmath>
@@ -64,6 +66,34 @@ void test_tokenizer() {
     std::cout << "PASADO ✅\n";
 }
 
+void test_gradient_check_gelu() {
+    std::cout << "🧪 [Test 4] Verificación de Gradiente GELU por Diferencias Finitas... ";
+    ns::Tensor x({1, 1});
+    x.data[0] = 1.5f;
+
+    ns::Tensor dout({1, 1});
+    dout.data[0] = 1.0f;
+
+    ns::Tensor dx;
+    ns::gelu_backward(dout, x, dx);
+
+    // Gradiente numérico por diferencias finitas: (f(x+eps) - f(x-eps)) / (2*eps)
+    float eps = 1e-4f;
+    ns::Tensor x_plus({1, 1}), x_minus({1, 1});
+    x_plus.data[0] = x.data[0] + eps;
+    x_minus.data[0] = x.data[0] - eps;
+
+    ns::Tensor y_plus, y_minus;
+    ns::gelu_forward(x_plus, y_plus);
+    ns::gelu_forward(x_minus, y_minus);
+
+    float num_grad = (y_plus.data[0] - y_minus.data[0]) / (2.0f * eps);
+    float diff = std::abs(dx.data[0] - num_grad);
+
+    assert(diff < 1e-3f);
+    std::cout << "PASADO ✅ (Diff: " << diff << ")\n";
+}
+
 int main() {
     std::cout << "============================================================\n";
     std::cout << "🚀 Ejecutando Suite de Pruebas Unitarias de NeuralSuite (C++)\n";
@@ -72,9 +102,10 @@ int main() {
     test_matmul();
     test_layernorm();
     test_tokenizer();
+    test_gradient_check_gelu();
 
     std::cout << "============================================================\n";
-    std::cout << "✅ ¡Todas las pruebas unitarias numéricas pasaron con éxito!\n";
+    std::cout << "✅ ¡Todas las pruebas unitarias pasaron con éxito!\n";
     std::cout << "============================================================\n";
     return 0;
 }
