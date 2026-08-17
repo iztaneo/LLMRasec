@@ -31,20 +31,24 @@ def estimate_loss(model, train_loader, val_loader, eval_iters, device):
     out = {}
     model.eval()
     for split, loader in [('train', train_loader), ('val', val_loader)]:
-        losses = torch.zeros(eval_iters)
+        losses = []
         loader_iter = iter(loader)
         for k in range(eval_iters):
             try:
                 X, Y = next(loader_iter)
             except StopIteration:
                 loader_iter = iter(loader)
-                X, Y = next(loader_iter)
+                try:
+                    X, Y = next(loader_iter)
+                except StopIteration:
+                    break
             X, Y = X.to(device), Y.to(device)
             _, loss = model(X, Y)
-            losses[k] = loss.item()
-        out[split] = losses.mean().item()
+            losses.append(loss.item())
+        out[split] = sum(losses) / max(1, len(losses))
     model.train()
     return out
+
 
 
 def configure_optimizer(model, weight_decay, learning_rate, device_type):

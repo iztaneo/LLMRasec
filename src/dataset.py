@@ -36,11 +36,12 @@ def prepare_dataset(
 
     # Separación Train / Val
     n = int(split_ratio * len(data))
-    train_data = data[:n]
-    val_data = data[n:]
+    train_data = data[:n] if n > block_size else data
+    val_data = data[n:] if len(data) - n > block_size else data
 
     train_dataset = TextDataset(train_data, block_size)
     val_dataset = TextDataset(val_data, block_size)
+
 
     train_loader = DataLoader(
         train_dataset,
