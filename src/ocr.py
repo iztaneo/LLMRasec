@@ -3,15 +3,15 @@ import torch.nn as nn
 
 class CRNNModel(nn.Module):
     """
-    Modelo CRNN (Convolutional Recurrent Neural Network) para OCR de Renglones de Texto completos.
-    Conv2D (Extractor Visual 2D) + BiLSTM (Secuenciador) + Linear (Vocabulario Completo).
+    Modelo CRNN (Convolutional Recurrent Neural Network) para OCR de Renglones Completo.
+    Extrae secuencias de palabras enteras (ej. "MITSUBISHI", "MOTORS") a lo largo de los timesteps horizontales.
     """
     def __init__(self, in_channels=1, hidden_dim=64, vocab_size=63):
         super().__init__()
         self.vocab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "
         self.vocab_size = len(self.vocab)
 
-        # 1. Extractor Visual 2D (CNN)
+        # Extractor Visual CNN 2D
         self.cnn = nn.Sequential(
             nn.Conv2d(in_channels, 16, kernel_size=3, padding=1),
             nn.ReLU(),
@@ -21,46 +21,43 @@ class CRNNModel(nn.Module):
             nn.MaxPool2d(2, 2), # [B, 32, 8, 32]
             nn.Conv2d(32, 64, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d((8, 1)) # Reducir alto a 1: [B, 64, 1, 32]
+            nn.MaxPool2d((8, 1)) # [B, 64, 1, 32] (32 pasos temporales horizontales)
         )
 
-        # 2. Secuenciador Recurrente Bidireccional (BiLSTM)
+        # Secuenciador BiLSTM
         self.lstm = nn.LSTM(input_size=64, hidden_size=hidden_dim, batch_first=True, bidirectional=True)
 
-        # 3. Proyector a Vocabulario (A-Z, a-z, 0-9, espacio)
+        # Proyector a Vocabulario (63 caracteres)
         self.fc = nn.Linear(hidden_dim * 2, self.vocab_size)
 
     def forward(self, x):
-        # x: [B, 1, 32, 128]
-        features = self.cnn(x) # [B, 64, 1, 32]
-        features = features.squeeze(2) # [B, 64, 32]
-        features = features.permute(0, 2, 1) # [B, 32, 64] (batch, timesteps, features)
-
+        features = self.cnn(x).squeeze(2).permute(0, 2, 1) # [B, 32, 64]
         lstm_out, _ = self.lstm(features) # [B, 32, 128]
-        logits = self.fc(lstm_out) # [B, 32, vocab_size]
+        logits = self.fc(lstm_out) # [B, 32, 63]
         return logits
 
-    def decode(self, logits):
+    def decode_word(self, logits):
         """
-        Decodificación Codiciosa (Greedy Search) de la secuencia predicha.
-        Colapsa caracteres repetidos consecutivos y elimina espacios vacíos extras.
+        Decodifica la secuencia horizontal completa de caracteres a lo largo de los 32 timesteps
+        para formar la palabra completa (ej. "MITSUBISHI" o "MOTORS").
         """
-        preds = torch.argmax(logits, dim=2) # [B, timesteps]
-        decoded_strings = []
+        preds = torch.argmax(logits, dim=2) # [B, 32]
+        decoded_words = []
 
         for b in range(preds.size(0)):
-            raw_pred = preds[b]
-            char_list = []
+            char_sequence = []
             prev_idx = -1
-            for idx_tensor in raw_pred:
-                idx = idx_tensor.item()
-                if idx != prev_idx and idx < len(self.vocab):
-                    char_list.append(self.vocab[idx])
+            for t_idx in preds[b]:
+                idx = t_idx.item()
+                if idx != prev_idx: # Colapsar repeticiones continuas del mismo carácter
+                    if idx < len(self.vocab):
+                        char = self.vocab[idx]
+                        if char != ' ':
+                            char_sequence.append(char)
                     prev_idx = idx
-            text = "".join(char_list).strip()
-            decoded_strings.append(text)
+            decoded_words.append("".join(char_sequence))
 
-        return decoded_strings
+        return decoded_words
 
     def save(self, path):
         torch.save(self.state_dict(), path)
